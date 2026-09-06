@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "knetminer-evidence-benchmark"
+version = "0.1.0"
+description = "Evidence-grounded biomedical graph retrieval and HGT reranking benchmark scaffold."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "httpx==0.28.1",
+  "networkx==3.6.1",
+  "pydantic==2.12.5",
+  "torch==2.12.1",
+  "torch-geometric==2.7.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==9.0.3"]
+model = ["transformers==5.15.0"]
+
+[project.scripts]
+knetminer-runtime = "knetminer_llm.evaluation.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]

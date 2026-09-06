@@ -1,0 +1,29 @@
+# Model binaries must not be committed
+/models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Staged data artifacts
+/data/staging/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# Results and reports (generated; not source)
+/results/
+/reports/
+
+# Environment
+.env
+.env.*
+.venv/
+venv/

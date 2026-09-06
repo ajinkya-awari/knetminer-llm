@@ -1,0 +1,11 @@
+# PyTorch 2.5.1 CUDA 12.1 retains Pascal sm_60 support for Kaggle Tesla P100 workers.
+--extra-index-url https://download.pytorch.org/whl/cu121
+httpx==0.28.1
+networkx==3.6.1
+pydantic==2.12.5
+pytest==9.0.3
+torch==2.5.1+cu121
+torchaudio==2.5.1+cu121
+torch-geometric==2.7.0
+torchvision==0.20.1+cu121
+transformers==5.15.0
