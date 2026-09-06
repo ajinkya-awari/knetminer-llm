@@ -6,7 +6,7 @@ and abstention over Open Targets-derived evidence.
 ## Status
 
 The source and offline fixture suite are implemented. On 2026-09-06,
-`python -m pytest -q` passed 124 tests with four dependency warnings and exit code 0;
+`python -m pytest -q` passed 127 tests with four dependency warnings and exit code 0;
 `python -m compileall -q src tests` also exited 0. These local checks use synthetic fixtures and
 mocked HTTP transports.
 
