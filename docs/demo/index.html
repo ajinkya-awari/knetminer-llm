@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>KnetMiner-LLM Evidence Workbench</title>
+  <meta name="description" content="Browse a frozen, citation-validated Open Targets evidence bundle without running a model or external API.">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="bundle.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#evidence-detail">Skip to evidence</a>
+  <header class="topbar">
+    <div class="brand-lockup">
+      <span class="brand-mark" aria-hidden="true">K</span>
+      <div>
+        <strong>KnetMiner-LLM</strong>
+        <span>Evidence Workbench</span>
+      </div>
+    </div>
+    <div class="runtime-state"><span aria-hidden="true"></span> Frozen bundle, offline runtime</div>
+  </header>
+
+  <main class="workspace">
+    <aside class="case-browser" aria-label="Evaluation cases">
+      <div class="browser-heading">
+        <p class="eyebrow">Validated catalogue</p>
+        <h1>Observed paths, inspectable end to end.</h1>
+        <p>Explore the fixed 30-answerable and 15-unanswerable evaluation set. Nothing on this page invokes a model.</p>
+      </div>
+
+      <label for="case-search">Find a case or stable ID</label>
+      <input id="case-search" type="search" autocomplete="off" placeholder="Search MONDO, ENSG, CHEMBL...">
+
+      <div class="filter-group" role="group" aria-label="Filter cases">
+        <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">All <span id="all-count">45</span></button>
+        <button class="filter" type="button" data-filter="answered" aria-pressed="false">Answered <span id="answered-count">30</span></button>
+        <button class="filter" type="button" data-filter="abstained" aria-pressed="false">Abstained <span id="abstained-count">15</span></button>
+      </div>
+
+      <p id="case-summary" class="case-summary" aria-live="polite"></p>
+      <ol id="case-list" class="case-list" aria-label="Matching evaluation cases"></ol>
+    </aside>
+
+    <section id="evidence-detail" class="evidence-detail" tabindex="-1" aria-live="polite">
+      <div class="detail-header">
+        <div>
+          <p id="case-kicker" class="eyebrow">Evaluation case</p>
+          <h2 id="case-title">Loading frozen evidence...</h2>
+        </div>
+        <span id="answer-status" class="status-badge">Loading</span>
+      </div>
+
+      <section class="answer-band" aria-labelledby="answer-heading">
+        <p class="section-label" id="answer-heading">Validated response</p>
+        <p id="answer-text" class="answer-text">Reading the local bundle.</p>
+        <p class="safety-note">Evidence retrieval only, not for clinical use.</p>
+      </section>
+
+      <section class="path-section" aria-labelledby="path-heading">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">Observed graph evidence</p>
+            <h3 id="path-heading">Cited paths</h3>
+          </div>
+          <span id="path-count" class="count-label">0 paths</span>
+        </div>
+        <div id="path-list" class="path-list"></div>
+      </section>
+
+      <section class="provenance-section" aria-labelledby="provenance-heading">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">Artifact identity</p>
+            <h3 id="provenance-heading">Provenance</h3>
+          </div>
+        </div>
+        <dl id="provenance-grid" class="provenance-grid"></dl>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <p>Open Targets Platform 26.06, CC0. Reverse transport edges are never cited.</p>
+    <a href="../../README.md">Repository documentation</a>
+  </footer>
+
+  <noscript>This evidence workbench requires JavaScript to browse the bundled static catalogue.</noscript>
+</body>
+</html>

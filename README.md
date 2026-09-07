@@ -1,21 +1,50 @@
-# KnetMiner-LLM
+<div align="center">
+  <img src="docs/assets/knetminer-evidence-flow.svg" width="100%" alt="Animated KnetMiner-LLM evidence flow from an observed biomedical graph through retrieval, HGT reranking, and validation to a cited answer or abstention." />
+  <h1>KnetMiner-LLM</h1>
+  <p><strong>Evidence-grounded biomedical graph retrieval with leakage-safe HGT evaluation, strict citations, and abstention.</strong></p>
+  <p>
+    <kbd>Python 3.11</kbd>
+    <kbd>132 local tests</kbd>
+    <kbd>Open Targets 26.06</kbd>
+    <kbd>MIT</kbd>
+    <kbd>Release gates verified</kbd>
+  </p>
+  <p>
+    <a href="#status">Evidence</a> |
+    <a href="https://ajinkya-awari.github.io/knetminer-llm/docs/demo/">Evidence workbench</a> |
+    <a href="#why-eight-kaggle-versions">Run history</a> |
+    <a href="#architecture">Architecture</a> |
+    <a href="#install">Install</a> |
+    <a href="#limitations">Limitations</a>
+  </p>
+</div>
 
-Evidence-grounded biomedical graph retrieval with leakage-safe HGT evaluation, strict citations,
-and abstention over Open Targets-derived evidence.
+## What This Actually Is
+
+KnetMiner-LLM answers biomedical graph questions only when it can trace the answer to observed,
+typed evidence paths. Open Targets records are normalized into one graph truth; bounded retrieval
+finds candidate paths; optional HGT scores those existing candidates; and a strict validator either
+accepts cited claims or abstains.
+
+The model is not an evidence source. HGT cannot add an edge, reverse transport edges cannot become
+citations, and invalid generated text falls back to a deterministic evidence-backed response. The
+current Kaggle run demonstrates those safety contracts, but it does **not** establish general answer
+quality, clinical utility, or superiority over another system.
 
 ## Status
 
-The source and offline fixture suite are implemented. On 2026-09-06,
-`python -m pytest -q` passed 127 tests with four dependency warnings and exit code 0;
+The source and offline fixture suite are implemented. On 2026-09-07,
+`python -m pytest -q` passed 132 tests with four dependency warnings and exit code 0;
 `python -m compileall -q src tests` also exited 0. These local checks use synthetic fixtures and
 mocked HTTP transports.
 
-A private Kaggle run completed on 2026-09-06. Its sanitized suite record reports 125 passing tests
-with exit code 0; the CUDA-only environment skipped the local unavailable-CUDA regression, but the
-record did not retain a skip or warning count. The run verified Open Targets release metadata
+A private Kaggle V8 run completed on 2026-09-07. Its sanitized suite record reports 130 passing
+tests with exit code 0; the record did not retain a skip or warning count, so the difference from
+the local count is not classified. The run verified Open Targets release metadata
 `26.06`, trained the bounded HGT benchmark on a Tesla P100 for seeds 42/43/44, executed the pinned
-Qwen 30/15 gate, and produced a frozen bundle whose artifact hashes and strict loader validation
-pass.
+Qwen 30/15 gate on that GPU, and produced a frozen bundle whose artifact hashes and strict loader
+validation pass. The [static evidence workbench](https://ajinkya-awari.github.io/knetminer-llm/docs/demo/)
+browses that bundle without a runtime model or external API.
 
 ### Bounded Kaggle Results
 
@@ -38,9 +67,40 @@ final outputs. These values demonstrate the safety fallback contract, not Qwen a
 bundle evaluation report hash is
 `d58a92c9dd3af2b3a995f9a4cd745dd2df410d9a3754a58c372fb8d1e1aeba24`.
 
-This repository contains no dataset, model weights, trained checkpoint, generated benchmark output,
-or hosted application. It makes no clinical, deployment, affiliation, or guaranteed-performance
-claim.
+## Why Eight Kaggle Versions?
+
+The completed run took eight private notebook versions because each non-final version exposed a distinct
+environment or evidence-recording defect. They are retained as negative evidence rather than hidden
+or presented as successful experiments.
+
+| Version | Outcome | What happened | What changed next |
+| --- | --- | --- | --- |
+| V1 | Limited pass | Remote source checks, Open Targets 26.06 metadata, 107 fixture tests, and a 10-test HGT graph smoke passed, but the smoke stayed on CPU and did not prove GPU execution. | Added explicit device selection, CUDA identity recording, and a fail-closed accelerator gate. |
+| V2 | Failed | An inherited `HF_HUB_OFFLINE=1` setting blocked the approved MiniLM fetch before HGT execution. | Clear only Hugging Face and Transformers offline flags inside explicitly approved model-download cells. |
+| V3 | Failed | Kaggle assigned a Tesla P100 (`sm_60`), while the installed Torch wheel contained kernels for `sm_70+`; execution stopped with `cudaErrorNoKernelImageForDevice`. | Pin a CUDA 12.1 Torch build that includes Pascal support and validate compiled architectures before training. |
+| V4 | Failed | Downgrading Torch alone left TorchVision ABI-incompatible, producing a missing `torchvision::nms` operator during model imports. | Pin Torch, TorchVision, and TorchAudio as one coherent CUDA 12.1 set. |
+| V5 | Complete | The pinned environment passed the sanitized suite, ran seeds 42/43/44 on the P100, exercised the 30/15 model gate, and produced a hash-validated frozen bundle. | Preserve the environment and report the 0-of-30 strict model acceptance result as an unresolved quality limitation. |
+| V6 | Cancelled | Updated prompt code reached Kaggle and all pre-model gates passed, but the run was cancelled after Qwen loaded. | Preserve partial evidence and rerun without treating the directory as a release bundle. |
+| V7 | Complete, slow | The full run completed and validated the bundle, but 30 float32 Qwen calls on CPU took about one hour and still accepted 0 outputs. | Add an explicit fail-closed model device argument and record it in provenance. |
+| V8 | Complete | Qwen ran explicitly on the Tesla P100; all integrity gates passed, but strict acceptance remained 0/30. | Publish the validated fallback bundle and retain model acceptance as a visible quality limitation. |
+
+### Notebook And Run Links
+
+- [Reproducible source notebook](notebooks/kaggle_run_06-knetminer-llm.ipynb) - checked in,
+  unexecuted, and fail-closed with all external gates set to `NOT_APPROVED`.
+- [Kaggle runbook](notebooks/KAGGLE_RUNBOOK_06-knetminer-llm.md) - staging, gate, output,
+  and provenance procedure.
+- [Private Kaggle notebook](https://www.kaggle.com/code/ajinkya1225/06-knetminer-llm-validation) -
+  access-controlled page containing the V1-V8 version selector and remote execution history.
+- [Private Kaggle source dataset](https://www.kaggle.com/datasets/ajinkya1225/06-knetminer-llm-source) -
+  access-controlled allowlisted source package used by the notebook.
+
+Immutable Kaggle script-version IDs were not captured in the release ledger, so this README does not
+invent direct per-version URLs. Use the private notebook page's version selector to inspect V1-V8.
+
+This repository contains no source snapshot, model weights, trained checkpoint, or private benchmark
+output. It includes a sanitized CC0-derived frozen demo bundle for the static workbench. The hosted
+page makes no clinical, affiliation, or guaranteed-performance claim.
 
 ## Architecture
 
@@ -106,7 +166,8 @@ knetminer-runtime model-bundle --help
 Both require an explicitly staged normalized snapshot and its SHA-256. The HGT command also requires
 a pinned MiniLM directory or `--allow-model-download`; a CUDA request fails instead of silently using
 CPU. The model-bundle command requires the exact 30-answerable/15-unanswerable question artifact and
-a pinned Qwen directory or the same explicit download gate.
+a pinned Qwen directory or the same explicit download gate. Both routes accept an explicit device;
+a CUDA request fails closed instead of silently falling back to CPU.
 
 For a clean remote run, attach a private allowlisted source dataset to
 `notebooks/kaggle_run_06-knetminer-llm.ipynb` and follow
@@ -142,15 +203,17 @@ a partial Kaggle directory as a frozen bundle.
 
 The project is designed for public biomedical knowledge-graph records, not patient data. Do not add
 patient, restricted, account-gated, credential-bearing, or unclear-license data. Raw provider
-responses, prompts, model generations, credentials, datasets, weights, caches, and private result
-bundles are excluded from the public source release. Network access is isolated behind explicit
-gates, and raw model output is discarded after validation.
+responses, prompts, model generations, credentials, source snapshots, weights, caches, and private
+result bundles are excluded from the public source release. The static demo contains only the
+validated CC0-derived bundle needed for its evidence catalogue. Network access is isolated behind
+explicit gates, and raw model output is discarded after validation.
 
 ## Limitations
 
 - Synthetic tests and the bounded Kaggle run validate contracts and failure behavior; they do not
   establish general answer quality.
-- The bounded Open Targets sample is not redistributed in the public repository.
+- The bounded Open Targets source snapshot is not redistributed; the static demo includes a derived
+  stable-ID and forward-edge inventory under the source's CC0 terms.
 - HGT is a reranker over observed graph structure, not a biological discovery engine.
 - Strict synthesis currently permits only a conservative evidence-availability claim; invalid model
   output becomes a deterministic supported response or abstention.
@@ -159,7 +222,8 @@ gates, and raw model output is discarded after validation.
 - Model directories must be verified against their separately distributed manifests.
 - No generated Qwen output passed the current exact validator; model-backed answer quality remains
   unresolved even though the deterministic fallback bundle validates.
-- Live hosting, sustained availability, and clinical utility are not verified.
+- GitHub Pages provides a static catalogue only; sustained availability and clinical utility are not
+  claimed.
 
 ## Attribution
 

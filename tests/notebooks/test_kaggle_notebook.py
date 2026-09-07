@@ -22,6 +22,8 @@ def test_kaggle_notebook_is_public_source_compatible_and_syntax_valid() -> None:
         assert cell.get("outputs", []) == []
         assert cell.get("execution_count") is None
 
+    assert "AGENTS.md" not in code
+    assert "CLAUDE.md" not in code
     assert "requirements-kaggle.txt" in code
     assert "payload.get('errors')" in code
     assert "synthetic HGT unit smoke" in code

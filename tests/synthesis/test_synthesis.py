@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import json
+import sys
+from types import SimpleNamespace
 from datetime import datetime, timezone
 
 import pytest
+import torch
 
+from knetminer_llm.synthesis import local_llm
 from knetminer_llm.contracts import EvidenceEdge, EvidencePath, Intent
 from knetminer_llm.synthesis.local_llm import (
     QWEN_MODEL_ID,
@@ -49,6 +53,49 @@ def test_synthesis_input_contains_typed_data_not_raw_instructions() -> None:
     assert request["intent"] == "disease_drugs"
     assert "instruction" not in json.dumps(request).lower()
     assert request["evidence_paths"][0]["path_id"].startswith("path:")
+
+
+def test_synthesis_input_provides_the_exact_allowed_answer_contract() -> None:
+    paths = evidence_paths()
+    request = build_synthesis_input(
+        Intent(name="disease_drugs", entity_ids=("EFO_0001",)),
+        ("EFO_0001",),
+        paths,
+    )
+
+    assert request["response_contract"]["format"] == "json_only"
+    assert request["response_contract"]["allowed_answer"] == {
+        "status": "answered",
+        "claims": [
+            {
+                "text": "An observed evidence path is available.",
+                "evidence_path_ids": [paths[0].path_id],
+            }
+        ],
+        "citations": [paths[0].path_id],
+        "abstention_reason": None,
+    }
+
+
+def test_chat_messages_keep_trusted_contract_separate_from_typed_evidence() -> None:
+    request = build_synthesis_input(
+        Intent(name="disease_drugs", entity_ids=("EFO_0001",)),
+        ("EFO_0001",),
+        evidence_paths(),
+    )
+
+    messages = local_llm.build_chat_messages(request)
+
+    assert [message["role"] for message in messages] == ["system", "user"]
+    assert "response_contract.allowed_answer" in messages[0]["content"]
+    expected = json.dumps(
+        request["response_contract"]["allowed_answer"],
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    assert expected in messages[0]["content"]
+    assert json.loads(messages[1]["content"]) == request
+    assert "chain-of-thought" not in json.dumps(messages).lower()
 
 
 def test_synthesis_input_rejects_entity_ids_that_disagree_with_intent() -> None:
@@ -129,10 +176,29 @@ def test_local_qwen_rejects_unpinned_model_identity() -> None:
         LocalQwenConfig(model_id="other/model")
 
 
-# UNEXECUTED (laptop policy forbids pytest) — regression for Bug #1:
-# pydantic.ValidationError must be caught in validate_model_output so that
-# model JSON with Pydantic-invalid field types (e.g. list where tuple required)
-# always falls back deterministically instead of propagating.
+def test_local_qwen_loader_places_model_on_explicit_device(tmp_path, monkeypatch) -> None:
+    model_path = tmp_path / "qwen"
+    model_path.mkdir()
+    loaded_model = SimpleNamespace()
+    loaded_model.to = lambda device: setattr(loaded_model, "device", device) or loaded_model
+    loaded_model.eval = lambda: None
+    fake_transformers = SimpleNamespace(
+        AutoTokenizer=SimpleNamespace(from_pretrained=lambda *args, **kwargs: object()),
+        AutoModelForCausalLM=SimpleNamespace(
+            from_pretrained=lambda *args, **kwargs: loaded_model
+        ),
+    )
+    monkeypatch.setitem(sys.modules, "transformers", fake_transformers)
+
+    local_llm.LocalQwenRunner.from_local_files(
+        LocalQwenConfig(),
+        model_path,
+        device=torch.device("cuda"),
+    )
+
+    assert loaded_model.device == torch.device("cuda")
+
+
 def test_pydantic_validation_error_triggers_deterministic_fallback() -> None:
     paths = evidence_paths()
     # Pydantic strict mode rejects a list for evidence_path_ids (requires tuple).

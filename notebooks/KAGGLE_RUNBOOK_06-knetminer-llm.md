@@ -66,11 +66,12 @@ python -m knetminer_llm.evaluation.cli model-bundle \
   --questions data/staging/real_structural_evaluation.json \
   --qwen-dir /kaggle/working/models/qwen2.5-1.5b-instruct \
   --output-dir results/kaggle_evidence/frozen_result_bundle \
+  --device cuda \
   --allow-model-download
 ```
 
-Model downloads are pinned to immutable revisions. HGT must report `requested_device=cuda` and
-`device_used=cuda`; CPU fallback is forbidden.
+Model downloads are pinned to immutable revisions. HGT and the Kaggle model-bundle route must report
+`requested_device=cuda` and `device_used=cuda`; CPU fallback is forbidden for either CUDA request.
 
 ## Evidence handling
 

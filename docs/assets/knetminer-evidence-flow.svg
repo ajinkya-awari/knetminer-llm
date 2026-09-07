@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">KnetMiner-LLM evidence flow</title>
+  <desc id="desc">An animated biomedical graph sends observed evidence through normalization, retrieval, HGT reranking, and strict validation to produce a cited answer or abstention.</desc>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    text {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      letter-spacing: 0;
+    }
+
+    .muted { fill: #8b949e; }
+    .bright { fill: #f0f6fc; }
+    .cyan { fill: #2dd4bf; }
+    .coral { fill: #fb7185; }
+    .blue { fill: #60a5fa; }
+    .lime { fill: #a3e635; }
+
+    .reveal-1 { animation: reveal 760ms cubic-bezier(.22,.78,.24,1) 80ms both; }
+    .reveal-2 { animation: reveal 760ms cubic-bezier(.22,.78,.24,1) 260ms both; }
+    .reveal-3 { animation: reveal 760ms cubic-bezier(.22,.78,.24,1) 440ms both; }
+    .reveal-4 { animation: reveal 760ms cubic-bezier(.22,.78,.24,1) 620ms both; }
+    .reveal-5 { animation: reveal 760ms cubic-bezier(.22,.78,.24,1) 800ms both; }
+    .trace-1 { animation: trace 900ms cubic-bezier(.22,.78,.24,1) 520ms both; }
+    .trace-2 { animation: trace 900ms cubic-bezier(.22,.78,.24,1) 760ms both; }
+    .trace-3 { animation: trace 900ms cubic-bezier(.22,.78,.24,1) 1000ms both; }
+    .trace-4 { animation: trace 900ms cubic-bezier(.22,.78,.24,1) 1240ms both; }
+    .verdict { animation: verdict 820ms cubic-bezier(.16,1,.3,1) 1680ms both; }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes trace {
+      from { opacity: 0; stroke-dashoffset: 1; }
+      to { opacity: 1; stroke-dashoffset: 0; }
+    }
+
+    @keyframes verdict {
+      from { opacity: 0; transform: translateX(-10px) scale(.98); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+  </style>
+
+  <rect width="1200" height="420" rx="18" fill="#0d1117"/>
+  <rect x="1" y="1" width="1198" height="418" rx="17" fill="none" stroke="#30363d" stroke-width="2"/>
+  <path d="M0 360 C180 322 318 404 504 366 S856 320 1200 370 V420 H0 Z" fill="#111820"/>
+
+  <g class="reveal-1">
+    <text x="48" y="54" class="cyan" font-size="14" font-weight="700">OPEN TARGETS 26.06 / OBSERVED EVIDENCE</text>
+    <text x="48" y="104" class="bright" font-size="40" font-weight="700">KnetMiner-LLM</text>
+    <text x="48" y="136" class="muted" font-size="16">Evidence-grounded graph retrieval.</text>
+    <text x="48" y="158" class="muted" font-size="16">Cite or abstain.</text>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <g fill="none" stroke="#30363d" stroke-width="2">
+      <path d="M90 260 L184 202 L292 250 L392 190"/>
+      <path d="M90 260 L192 322 L292 250 L386 316"/>
+      <path d="M184 202 L192 322"/>
+      <path d="M292 250 L392 190 L386 316"/>
+    </g>
+
+    <g fill="none" stroke="#2dd4bf" stroke-width="4" pathLength="1" stroke-dasharray="1" class="trace-1">
+      <path d="M90 260 L184 202 L292 250 L392 190" pathLength="1"/>
+    </g>
+
+    <g class="reveal-2">
+      <circle cx="90" cy="260" r="22" fill="#241720" stroke="#fb7185" stroke-width="3"/>
+      <circle cx="184" cy="202" r="18" fill="#102522" stroke="#2dd4bf" stroke-width="3"/>
+      <circle cx="192" cy="322" r="16" fill="#151e2b" stroke="#60a5fa" stroke-width="3"/>
+      <circle cx="292" cy="250" r="21" fill="#102522" stroke="#2dd4bf" stroke-width="3"/>
+      <circle cx="392" cy="190" r="18" fill="#151e2b" stroke="#60a5fa" stroke-width="3"/>
+      <circle cx="386" cy="316" r="16" fill="#241720" stroke="#fb7185" stroke-width="3"/>
+      <text x="63" y="294" class="coral" font-size="12">DISEASE</text>
+      <text x="273" y="286" class="cyan" font-size="12">TARGET</text>
+      <text x="373" y="165" class="blue" font-size="12">DRUG</text>
+    </g>
+  </g>
+
+  <line x1="466" y1="38" x2="466" y2="382" stroke="#30363d" stroke-width="1"/>
+
+  <g class="reveal-2">
+    <text x="510" y="58" class="muted" font-size="13">EVIDENCE PIPELINE</text>
+    <text x="510" y="87" class="bright" font-size="22" font-weight="700">Observed paths remain the source of truth</text>
+  </g>
+
+  <g class="reveal-2">
+    <rect x="510" y="132" width="142" height="72" rx="8" fill="#111820" stroke="#2dd4bf" stroke-width="2"/>
+    <text x="526" y="158" class="cyan" font-size="12">01</text>
+    <text x="526" y="182" class="bright" font-size="15" font-weight="700">NORMALIZE</text>
+    <text x="526" y="196" class="muted" font-size="10">typed provenance</text>
+  </g>
+
+  <path d="M652 168 H690" fill="none" stroke="#2dd4bf" stroke-width="3" pathLength="1" stroke-dasharray="1" class="trace-1"/>
+  <path d="M682 161 L690 168 L682 175" fill="none" stroke="#2dd4bf" stroke-width="3" class="reveal-3"/>
+
+  <g class="reveal-3">
+    <rect x="690" y="132" width="142" height="72" rx="8" fill="#111820" stroke="#60a5fa" stroke-width="2"/>
+    <text x="706" y="158" class="blue" font-size="12">02</text>
+    <text x="706" y="182" class="bright" font-size="15" font-weight="700">RETRIEVE</text>
+    <text x="706" y="196" class="muted" font-size="10">bounded paths</text>
+  </g>
+
+  <path d="M832 168 H870" fill="none" stroke="#60a5fa" stroke-width="3" pathLength="1" stroke-dasharray="1" class="trace-2"/>
+  <path d="M862 161 L870 168 L862 175" fill="none" stroke="#60a5fa" stroke-width="3" class="reveal-4"/>
+
+  <g class="reveal-4">
+    <rect x="870" y="132" width="142" height="72" rx="8" fill="#111820" stroke="#a3e635" stroke-width="2"/>
+    <text x="886" y="158" class="lime" font-size="12">03</text>
+    <text x="886" y="182" class="bright" font-size="15" font-weight="700">RERANK</text>
+    <text x="886" y="196" class="muted" font-size="10">HGT scores only</text>
+  </g>
+
+  <path d="M1012 168 H1050" fill="none" stroke="#a3e635" stroke-width="3" pathLength="1" stroke-dasharray="1" class="trace-3"/>
+  <path d="M1042 161 L1050 168 L1042 175" fill="none" stroke="#a3e635" stroke-width="3" class="reveal-5"/>
+
+  <g class="reveal-5">
+    <rect x="1050" y="132" width="104" height="72" rx="8" fill="#111820" stroke="#fb7185" stroke-width="2"/>
+    <text x="1066" y="158" class="coral" font-size="12">04</text>
+    <text x="1066" y="182" class="bright" font-size="15" font-weight="700">VALIDATE</text>
+    <text x="1066" y="196" class="muted" font-size="10">claims + cites</text>
+  </g>
+
+  <path d="M1102 204 V250 H834" fill="none" stroke="#fb7185" stroke-width="3" pathLength="1" stroke-dasharray="1" class="trace-4"/>
+  <path d="M842 243 L834 250 L842 257" fill="none" stroke="#fb7185" stroke-width="3" class="verdict"/>
+
+  <g class="verdict">
+    <rect x="510" y="238" width="324" height="92" rx="8" fill="#111820" stroke="#3fb950" stroke-width="2"/>
+    <circle cx="542" cy="270" r="10" fill="#102a19" stroke="#3fb950" stroke-width="2"/>
+    <path d="M537 270 L541 274 L548 265" fill="none" stroke="#a3e635" stroke-width="2"/>
+    <text x="566" y="275" class="bright" font-size="16" font-weight="700">CITED ANSWER</text>
+    <text x="534" y="302" class="muted" font-size="12">Every claim maps to an</text>
+    <text x="534" y="318" class="muted" font-size="12">observed path ID.</text>
+  </g>
+
+  <g class="verdict">
+    <rect x="858" y="238" width="296" height="92" rx="8" fill="#111820" stroke="#fb7185" stroke-width="2"/>
+    <circle cx="890" cy="270" r="10" fill="#2a151c" stroke="#fb7185" stroke-width="2"/>
+    <path d="M885 265 L895 275 M895 265 L885 275" stroke="#fb7185" stroke-width="2"/>
+    <text x="914" y="275" class="bright" font-size="16" font-weight="700">ABSTENTION</text>
+    <text x="882" y="302" class="muted" font-size="12">Unsupported evidence never</text>
+    <text x="882" y="318" class="muted" font-size="12">becomes an answer.</text>
+  </g>
+
+  <g class="reveal-5">
+    <text x="510" y="376" class="muted" font-size="12">HGT NEVER CREATES EVIDENCE</text>
+    <text x="1102" y="376" class="cyan" font-size="12" text-anchor="end">CITE OR ABSTAIN</text>
+  </g>
+</svg>

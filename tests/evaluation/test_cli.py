@@ -4,6 +4,7 @@ import json
 
 import pytest
 
+from knetminer_llm.evaluation import cli
 from knetminer_llm.evaluation.cli import (
     directory_manifest_hash,
     load_questions,
@@ -63,3 +64,29 @@ def test_model_source_fails_closed_without_local_files_or_download_approval(tmp_
             local_path=tmp_path / "missing",
             allow_download=False,
         )
+
+
+def test_model_bundle_uses_the_full_bounded_generation_budget() -> None:
+    assert cli.model_bundle_config().max_new_tokens == 256
+
+
+def test_model_bundle_cli_accepts_explicit_cuda_device() -> None:
+    args = cli._build_parser().parse_args(
+        [
+            "model-bundle",
+            "--snapshot",
+            "snapshot.json",
+            "--snapshot-sha",
+            "a" * 64,
+            "--questions",
+            "questions.json",
+            "--qwen-dir",
+            "qwen",
+            "--output-dir",
+            "bundle",
+            "--device",
+            "cuda",
+        ]
+    )
+
+    assert args.device == "cuda"

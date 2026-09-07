@@ -31,6 +31,12 @@ MINILM_MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
 MINILM_MODEL_REVISION = "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
 
 
+def model_bundle_config() -> LocalQwenConfig:
+    """Return the approved bounded generation configuration for bundle runs."""
+
+    return LocalQwenConfig()
+
+
 def load_questions(path: Path) -> tuple[EvaluationQuestion, ...]:
     """Load the exact real 30/15 question artifact."""
 
@@ -172,6 +178,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"status": "passed", "artifact": str(args.output), "sha256": artifact_hash}))
         return 0
 
+    device = resolve_device(args.device)
     model_path = resolve_model_source(
         model_id=QWEN_MODEL_ID,
         revision=QWEN_MODEL_REVISION,
@@ -181,14 +188,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     model_hash = directory_manifest_hash(model_path)
     runner = LocalQwenRunner.from_local_files(
-        LocalQwenConfig(max_new_tokens=64),
+        model_bundle_config(),
         model_path,
+        device=device,
     )
     questions = load_questions(args.questions)
     evaluation = run_model_backed_evaluation(snapshot, questions, runner=runner)
     evaluation["summary"]["runtime"] = capture_runtime(
         seed=42,
-        requested_device="cpu",
+        requested_device=args.device,
         input_hashes={"model_directory": model_hash, "snapshot": args.snapshot_sha},
     )
     manifest = write_frozen_result_bundle(
@@ -221,6 +229,7 @@ def _build_parser() -> argparse.ArgumentParser:
     model.add_argument("--questions", type=Path, required=True)
     model.add_argument("--qwen-dir", type=Path, required=True)
     model.add_argument("--output-dir", type=Path, required=True)
+    model.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
     return parser
 
 

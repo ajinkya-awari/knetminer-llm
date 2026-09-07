@@ -3,11 +3,33 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
+
+if TYPE_CHECKING:
+    import torch
 
 
 QWEN_MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 QWEN_MODEL_REVISION = "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+TRUSTED_SYSTEM_PROMPT = (
+    "Return only the compact JSON object at response_contract.allowed_answer. "
+    "Do not add Markdown, commentary, or additional keys. Exact allowed JSON: "
+)
+
+
+def build_chat_messages(typed_input: dict[str, Any]) -> list[dict[str, str]]:
+    """Separate the trusted output contract from serialized typed evidence."""
+
+    serialized = json.dumps(typed_input, sort_keys=True, separators=(",", ":"))
+    allowed = json.dumps(
+        typed_input["response_contract"]["allowed_answer"],
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return [
+        {"role": "system", "content": TRUSTED_SYSTEM_PROMPT + allowed},
+        {"role": "user", "content": serialized},
+    ]
 
 
 @dataclass(frozen=True)
@@ -45,7 +67,13 @@ class LocalQwenRunner:
         return self._generator(typed_input)
 
     @classmethod
-    def from_local_files(cls, config: LocalQwenConfig, model_path: Path) -> "LocalQwenRunner":
+    def from_local_files(
+        cls,
+        config: LocalQwenConfig,
+        model_path: Path,
+        *,
+        device: torch.device | str = "cpu",
+    ) -> "LocalQwenRunner":
         """Load the pinned model without network access and expose typed-input generation."""
 
         if not model_path.is_dir():
@@ -64,12 +92,12 @@ class LocalQwenRunner:
             local_files_only=True,
             torch_dtype=torch.float32,
         )
+        model.to(device)
         model.eval()
 
         def generate(typed_input: dict[str, Any]) -> str:
-            serialized = json.dumps(typed_input, sort_keys=True, separators=(",", ":"))
             inputs = tokenizer.apply_chat_template(
-                [{"role": "user", "content": serialized}],
+                build_chat_messages(typed_input),
                 add_generation_prompt=True,
                 tokenize=True,
                 return_dict=True,
