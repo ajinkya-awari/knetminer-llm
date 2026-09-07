@@ -11,7 +11,7 @@
   </p>
   <p>
     <a href="#status">Evidence</a> |
-    <a href="https://ajinkya-awari.github.io/knetminer-llm/docs/demo/">Evidence workbench</a> |
+    <a href="https://ajinkya-awari.github.io/knetminer-llm/demo/">Evidence workbench</a> |
     <a href="#why-eight-kaggle-versions">Run history</a> |
     <a href="#architecture">Architecture</a> |
     <a href="#install">Install</a> |
@@ -43,7 +43,7 @@ tests with exit code 0; the record did not retain a skip or warning count, so th
 the local count is not classified. The run verified Open Targets release metadata
 `26.06`, trained the bounded HGT benchmark on a Tesla P100 for seeds 42/43/44, executed the pinned
 Qwen 30/15 gate on that GPU, and produced a frozen bundle whose artifact hashes and strict loader
-validation pass. The [static evidence workbench](https://ajinkya-awari.github.io/knetminer-llm/docs/demo/)
+validation pass. The [static evidence workbench](https://ajinkya-awari.github.io/knetminer-llm/demo/)
 browses that bundle without a runtime model or external API.
 
 ### Bounded Kaggle Results
