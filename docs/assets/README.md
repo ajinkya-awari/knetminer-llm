@@ -1,5 +1,8 @@
 # README Assets
 
+[Project README](../../README.md) | [Architecture](../architecture.md) |
+[Evidence workbench](../demo/)
+
 `knetminer-evidence-flow.svg` is a hand-authored, dependency-free SVG for the repository README. It
 uses only local vector elements and embedded CSS. The one-shot animation reveals the existing graph
 and validation pipeline; it does not render benchmark values or generated biological claims.
@@ -16,3 +19,6 @@ Select-String -Path docs/assets/knetminer-evidence-flow.svg -Pattern `
 ```
 
 The XML command must exit 0 and the scan must return no matches.
+
+GitHub clients that disable CSS animation still receive the complete static frame. The asset is
+decorative documentation only and is not a benchmark chart, runtime component, or evidence source.

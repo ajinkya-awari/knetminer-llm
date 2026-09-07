@@ -19,6 +19,11 @@
   </p>
 </div>
 
+> **Release scope:** the repository, bounded Kaggle workflow, frozen-bundle integrity checks, and
+> static evidence workbench are verified. Generated-answer quality remains unresolved because 0/30
+> Qwen outputs passed the exact validator; validated deterministic fallbacks produced the displayed
+> answers.
+
 ## What This Actually Is
 
 KnetMiner-LLM answers biomedical graph questions only when it can trace the answer to observed,
@@ -238,3 +243,10 @@ explicit gates, and raw model output is discarded after validation.
 
 Third-party licenses remain with their copyright holders; see `THIRD_PARTY_NOTICES.md`. Project source
 code is available under the MIT License.
+
+---
+
+[Evidence workbench](https://ajinkya-awari.github.io/knetminer-llm/demo/) |
+[Architecture](docs/architecture.md) |
+[Data and safety](docs/data-and-safety.md) |
+[Kaggle runbook](notebooks/KAGGLE_RUNBOOK_06-knetminer-llm.md)

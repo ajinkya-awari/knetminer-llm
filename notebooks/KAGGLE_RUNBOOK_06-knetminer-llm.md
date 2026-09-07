@@ -1,10 +1,23 @@
 # Project 06 Kaggle runbook
 
+[README](../README.md) | [Architecture](../docs/architecture.md) |
+[Data and safety](../docs/data-and-safety.md) |
+[Private Kaggle notebook](https://www.kaggle.com/code/ajinkya1225/06-knetminer-llm-validation)
+
 Notebook: `kaggle_run_06-knetminer-llm.ipynb`
 
 The checked-in notebook is an unexecuted, fail-closed template. Approval literals remain
 `NOT_APPROVED`. For an authorized run, create a private staging copy, change only the required
 approval literals there, and keep generated evidence outside the public source export.
+
+## Validated Reference Run
+
+Private notebook V8 completed on 2026-09-07 with Python 3.12.13, Torch 2.5.1+cu121, PyG 2.7.0,
+CUDA 12.1, and a Tesla P100. It ran HGT seeds 42/43/44 and the 30-answerable/15-unanswerable model
+gate with explicit CUDA placement. The frozen bundle passed its strict loader and artifact-manifest
+checks. Strict Qwen acceptance remained 0/30, so this is execution and fallback-safety evidence, not
+generated-answer-quality evidence. See the README for the complete V1-V8 history and measured
+aggregate metrics.
 
 ## Required inputs
 
@@ -86,3 +99,13 @@ public GitHub repository. A failed or partial output is not a release bundle.
 The runtime may report measured HGT or model-backed results only after the corresponding output and
 hashes are downloaded and validated. A release-metadata check or synthetic smoke is not a training
 result.
+
+## Acceptance Checklist
+
+- Record Python, OS, Torch, PyG, CUDA, GPU name, requested device, and device used.
+- Record seeds, sample counts, input identities, output identities, and every SHA-256.
+- Require the exact 30-answerable/15-unanswerable artifact for the model gate.
+- Validate citations, abstentions, bundle schema, trusted snapshot identity, and manifest hashes.
+- Keep raw generations, source snapshots, models, and private bundles outside the public export.
+- Preserve failed and cancelled versions as historical evidence; never relabel a partial directory
+  as a release bundle.
