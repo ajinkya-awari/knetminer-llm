@@ -1,4 +1,4 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0-0d1117,50-062323,100-0a1a2e&height=220&section=header&text=KnetMiner-LLM&fontSize=56&fontColor=2dd4bf&animation=fadeIn&desc=Evidence-grounded%20biomedical%20graph%20retrieval.%20Cite%20or%20abstain.&descAlignY=58&descSize=18&fontAlignY=38&descColor=8b949e" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2,2,5,30&height=200&section=header&text=KnetMiner-LLM&fontSize=52&fontColor=fff&animation=twinkling&fontAlignY=38&desc=Evidence-grounded%20biomedical%20graph%20retrieval%20%E2%80%94%20cite%20or%20abstain.&descAlignY=58&descAlign=50&descSize=16" width="100%" />
 
 <div align="center">
 
@@ -303,4 +303,4 @@ Third-party licences remain with their copyright holders; see `THIRD_PARTY_NOTIC
 
 ---
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0-0a1a2e,50-062323,100-0d1117&height=100&section=footer" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2,2,5,30&height=100&section=footer" width="100%" />
